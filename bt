@@ -1,0 +1,15 @@
+#!/bin/sh
+BT_DEVICES=$(bluetoothctl paired-devices | cut -d ' ' -f 2)
+
+UPLIFT_ADDR="04:FE:A1:DC:4C:F1"
+MOUSE_ADDR="34:88:5D:72:DA:A9"
+
+for i in $BT_DEVICES; do
+  if [ "$i" == "$UPLIFT_ADDR" ]; then
+   echo -en "🎧 "
+  fi
+  
+  if [ "$i" == "$MOUSE_ADDR" ]; then
+   echo -en "🖱️"
+  fi
+done

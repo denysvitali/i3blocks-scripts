@@ -1,0 +1,21 @@
+#!/bin/bash
+DEFAULT_SINK=$(pacmd info |grep "Default sink" | cut -d ':' -f 2 | grep -Po '\S+')
+VOLUME=$(pactl list | grep -i -A 10 -m 1 "$DEFAULT_SINK" | grep -m 1 'Volume:' | grep -m 1 -Po '\d+?%' | head -n 1 | grep -Po '\d+')
+
+if [ $VOLUME -eq 0 ]; then
+  echo "🔇";
+  exit 0;
+fi
+
+SYMBOL="🔈";
+
+if [[ $VOLUME -gt 50 ]]; then
+  SYMBOL="🔉";
+fi
+
+if [[ $VOLUME -gt 75 ]]; then
+  SYMBOL="🔊";
+fi
+
+echo "$SYMBOL  $VOLUME%"
+

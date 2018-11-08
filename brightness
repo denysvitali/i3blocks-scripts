@@ -1,0 +1,21 @@
+#!/bin/sh
+b_value=$(brightnessctl g)
+b_max=$(brightnessctl m)
+LC_NUMERIC="en_US.UTF-8" printf "%.0f" $(bc <<< "scale = 2; $b_value/$b_max * 100")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
