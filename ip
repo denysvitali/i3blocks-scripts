@@ -1,0 +1,33 @@
+#!/bin/bash
+
+WL_IP=$(ifconfig wlp7s0 | awk '/inet / {print $2}')
+ETH_IP=$(ifconfig enp8s0 | awk '/inet / {print $2}')
+DNS_IP=$(cat /etc/resolv.conf | grep 'nameserver' | head | cut -d ' ' -f 2)
+
+NS=false
+
+function addSpace(){
+  if $NS; then
+    echo -n "  "
+  fi
+}
+
+if [ ! -z $WL_IP ]; then
+  echo -ne '<span color="#90A4AE">W: '$WL_IP'</span>'
+  NS=true
+fi
+
+addSpace
+NS=false
+
+if [ ! -z $ETH_IP ]; then
+  echo -n "E: $ETH_IP"
+  NS=true
+fi
+
+addSpace
+NS=false
+
+if [ ! -z $DNS_IP ]; then
+  echo -n '<span color="#DCE775">D: '$DNS_IP'</span>'
+fi
