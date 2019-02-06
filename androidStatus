@@ -4,7 +4,7 @@ SSID_NAME=$(/sbin/iwgetid -r)
 
 if [ $SSID_NAME == "denvit" ]; then
   DNS=$(cat /etc/resolv.conf | grep -oP "192.168.43.\d+")
-  if [ $DNS -z ]; then
+  if [ -z $DNS ]; then
     exit
   fi
   STATUS=$(curl "http://$DNS:8080/api/batteryLevel")
@@ -14,7 +14,7 @@ if [ $SSID_NAME == "denvit" ]; then
   TEMPERATURE=$(echo "$STATUS" | jq -r .temperature)
 
   echo -en "📱"
-  echo -en "BAT: $BATTERY_LEVEL - $VOLTAGE V"
+  echo -en "BAT: $BATTERY_LEVEL% - $VOLTAGE V"
   if [ $PLUGGED_STATUS == "PLUGGED_USB" ]; then
     echo -en "  \uf287"
   elif [ $PLUGGED_STATUS == "PLUGGED_AC" ]; then
