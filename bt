@@ -1,12 +1,15 @@
 #!/bin/sh
-BT_DEVICES=$(bluetoothctl paired-devices | cut -d ' ' -f 2)
+BT_DEVICES=$(bluetoothctl info | grep 'Device' | cut -d ' ' -f 2)
 
 UPLIFT_ADDR="04:FE:A1:DC:4C:F1"
+WH1000XM3_ADDR="CC:98:8B:56:F0:E4"
 MOUSE_ADDR="34:88:5D:72:DA:A9"
 
 for i in $BT_DEVICES; do
   if [ "$i" == "$UPLIFT_ADDR" ]; then
-   echo -en "🎧 "
+   echo -en "🎧  Uplift 2 Wireless"
+   elif [ "$i" == "$WH1000XM3_ADDR" ]; then
+   echo -en "🎧  WH-1000XM3"
   fi
   
   if [ "$i" == "$MOUSE_ADDR" ]; then
