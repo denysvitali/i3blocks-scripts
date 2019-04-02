@@ -3,23 +3,27 @@
 SSID_NAME=$(/sbin/iwgetid -r)
 
 if [ $SSID_NAME == "denvit" ]; then
-  DNS=$(cat /etc/resolv.conf | grep -oP "192.168.43.\d+")
-  if [ -z $DNS ]; then
-    exit
-  fi
-  STATUS=$(curl "http://$DNS:8080/api/batteryLevel")
-  BATTERY_LEVEL=$(echo "$STATUS" | jq -r .level)
-  PLUGGED_STATUS=$(echo "$STATUS" | jq -r .pluggedStatus)
-  VOLTAGE=$(echo "$STATUS" | jq -r .voltage)
-  TEMPERATURE=$(echo "$STATUS" | jq -r .temperature)
-
-  echo -en "📱"
-  echo -en "BAT: $BATTERY_LEVEL% - $VOLTAGE V"
-  if [ $PLUGGED_STATUS == "PLUGGED_USB" ]; then
-    echo -en "  \uf287"
-  elif [ $PLUGGED_STATUS == "PLUGGED_AC" ]; then
-    echo -en "  \uf1e6"
-  fi
-
-  echo -en " - $TEMPERATURE °C"
+  IP=$(cat /etc/resolv.conf | grep -oP "192.168.43.\d+")
+elif [ $SSID_NAME == "DW_EAP" ]; then
+  IP="Oneplus5T.lnet"
 fi
+
+if [ -z $IP ]; then
+  exit
+fi
+
+STATUS=$(curl "http://$IP:8080/api/batteryLevel")
+BATTERY_LEVEL=$(echo "$STATUS" | jq -r .level)
+PLUGGED_STATUS=$(echo "$STATUS" | jq -r .pluggedStatus)
+VOLTAGE=$(echo "$STATUS" | jq -r .voltage)
+TEMPERATURE=$(echo "$STATUS" | jq -r .temperature)
+
+echo -en "📱"
+echo -en "BAT: $BATTERY_LEVEL% - $VOLTAGE V"
+if [ $PLUGGED_STATUS == "PLUGGED_USB" ]; then
+  echo -en "  \uf287"
+elif [ $PLUGGED_STATUS == "PLUGGED_AC" ]; then
+  echo -en "  \uf1e6"
+fi
+
+echo -en " - $TEMPERATURE °C"
