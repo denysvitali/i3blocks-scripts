@@ -1,18 +1,36 @@
 #!/bin/sh
-BT_DEVICES=$(bluetoothctl info | grep 'Device' | cut -d ' ' -f 2)
-
 UPLIFT_ADDR="04:FE:A1:DC:4C:F1"
 WH1000XM3_ADDR="CC:98:8B:56:F0:E4"
 MOUSE_ADDR="34:88:5D:72:DA:A9"
 
-for i in $BT_DEVICES; do
-  if [ "$i" == "$UPLIFT_ADDR" ]; then
-   echo -en "🎧  Uplift 2 Wireless"
-   elif [ "$i" == "$WH1000XM3_ADDR" ]; then
-   echo -en "🎧  WH-1000XM3"
-  fi
-  
-  if [ "$i" == "$MOUSE_ADDR" ]; then
-   echo -en "🖱️"
-  fi
-done
+ADDR="$UPLIFT_ADDR \
+$WH1000XM3_ADDR \
+$MOUSE_ADDR"
+
+first=0
+for i in $ADDR; do
+								BT_COMMAND=$(bt-device -i $i)
+								BT_NAME=$(echo "$BT_COMMAND" | grep Name | cut -d ':' -f 2 | sed -r 's/^\s+//g')
+								BT_CONNECTED=$(echo "$BT_COMMAND" | grep Connected | cut -d ':' -f 2 | sed -r 's/^\s+//g')
+								BT_ICON=$(echo "$BT_COMMAND" | grep Icon | cut -d ':' -f 2 | sed -r 's/^\s+//g')
+
+								if [ "$BT_CONNECTED" -eq "1" ]; then
+																if [ $first == 1 ]; then
+																								echo -ne "  "
+																else
+																								first=1;
+																fi;
+																case $BT_ICON in
+																								audio-card)
+																																ICON="🎧"
+																																;;
+																								input-mouse)
+																																ICON="🖱️"
+																																;;
+																								*)
+																																ICON=""
+																																;;
+																esac
+																echo -ne "$ICON $BT_NAME"
+								fi
+done;
